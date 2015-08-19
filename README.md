@@ -12,4 +12,4 @@ Recent(item)s adds an indicator to gnome shell panel to quickly navigate recent 
 
 ### Screenshot
 
-![Screenshot](https://raw.github.com/leonardo-bartoli/gnome-shell-extension-Recents/master/data/screenshot.jpg)
+![Screenshot](https://raw.githubusercontent.com/leonardo-bartoli/gnome-shell-extension-Recents/master/data/screenshot.png)
