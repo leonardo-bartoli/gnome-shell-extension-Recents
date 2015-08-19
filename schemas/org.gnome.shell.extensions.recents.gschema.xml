@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="leonardo.bartoli.gmail.com-extensions">
+  <schema path="/org/gnome/shell/extensions/recents/" id="org.gnome.shell.extensions.recents">
+	<key name="case-sensitive" type="b">
+		<default>false</default>
+		<summary>Perform case sensitive search</summary>
+		<description>Set true to perform case sensitive search</description>
+	</key>
+	<key name="file-full-path" type="b">
+		<default>true</default>
+		<summary>Display file full path</summary>
+		<description>Set true to display file full path</description>
+	</key>
+    <key name="items-number" type="i">
+      <range min="0" max="128"/>
+	  <default>16</default>
+	  <summary>Max number of items shown</summary>
+	  <description>Set maximum number of items shown</description>
+	</key>
+	<key name="popup-menu-width" type="i">
+      <range min="400" max="1280"/>
+	  <default>608</default>
+	  <summary>Popup Menu width</summary>
+	  <description>Set Popup Menu width (in px)</description>
+	</key>
+  </schema>
+</schemalist>

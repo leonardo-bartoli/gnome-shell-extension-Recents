@@ -1,0 +1,11 @@
+{
+    "description": "Add an icon in top panel to list recently opened files", 
+    "name": "Recent (Items)",
+    "settings-schema": "org.gnome.shell.extensions.recents",
+    "shell-version": [
+        "3.16"
+    ], 
+    "url": "", 
+    "uuid": "Recents@leonardo.bartoli.gmail.com", 
+    "version": 1
+}
