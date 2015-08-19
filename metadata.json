@@ -1,11 +1,11 @@
 {
-    "description": "Add an icon in top panel to list recently opened files", 
     "name": "Recent (Items)",
+    "uuid": "Recents@leonardo.bartoli.gmail.com", 
+    "description": "Add an indicator in top panel to list recently opened files", 
     "settings-schema": "org.gnome.shell.extensions.recents",
     "shell-version": [
         "3.16"
     ], 
-    "url": "", 
-    "uuid": "Recents@leonardo.bartoli.gmail.com", 
+    "url": "https://github.com/leonardo-bartoli/gnome-shell-extension-Recents",
     "version": 1
 }
