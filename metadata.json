@@ -1,5 +1,5 @@
 {
-    "name": "Recent (Items)",
+    "name": "Recent(Item)s",
     "uuid": "Recents@leonardo.bartoli.gmail.com", 
     "description": "Add an indicator in top panel to list recently opened files", 
     "settings-schema": "org.gnome.shell.extensions.recents",
