@@ -24,9 +24,6 @@ const InfoBtn = new Lang.Class({
         this.child = new St.Icon({
             icon_name: 'dialog-information-symbolic'
         });
-        
-        // let icon = new Gio.ThemedIcon({ name: 'edit-clear-symbolic' });
-        // this.parent(icon, 'Clear list', {});
     }
 });
 
@@ -45,9 +42,6 @@ const ClearBtn = new Lang.Class({
         this.child = new St.Icon({
             icon_name: 'edit-clear-all-symbolic'
         });
-        
-        // let icon = new Gio.ThemedIcon({ name: 'edit-clear-symbolic' });
-        // this.parent(icon, 'Clear list', {});
     }
 });
 
@@ -66,9 +60,6 @@ const PrefsBtn = new Lang.Class({
         this.child = new St.Icon({
             icon_name: 'preferences-system-symbolic'
         });
-        
-        // let icon = new Gio.ThemedIcon({ name: 'edit-clear-symbolic' });
-        // this.parent(icon, 'Clear list', {});
     }
 });
 

@@ -1,6 +1,8 @@
 const Lang = imports.lang;
 
+const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
+
 
 function escapeRegExp(str) {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
@@ -12,7 +14,6 @@ const RecentManager = new Lang.Class({
     _init: function(settings) {
         settings = settings || {};
 
-        log(settings);
         this.itemsNumber = settings.itemsNumber;
         this.caseSensitive = settings.caseSensitive;
         this.fileFullPath = settings.fileFullPath;
@@ -25,6 +26,7 @@ const RecentManager = new Lang.Class({
         }));
 
         this._conhandler = null;
+        this._homeRegExp = new RegExp('^(' + GLib.get_home_dir() + ')');
     },
     
     _onDestroy: function() {
@@ -47,7 +49,7 @@ const RecentManager = new Lang.Class({
 
     query: function(searchString) {
         searchString = searchString || '';
-        let itemsNumber = this.itemsNumber == 0 ? this._items.length : Math.min(this._items.length, this.itemsNumber);
+        let itemsNumber = this.itemsNumber === 0 ? this._items.length : Math.min(this._items.length, this.itemsNumber);
 
         if (searchString.length === 0) {
             if (itemsNumber == this._items.length) {
@@ -64,7 +66,7 @@ const RecentManager = new Lang.Class({
             reg = new RegExp(escapeRegExp(searchString), 'i');
         }
         
-        let out = new Array();
+        let out = [];
         let done = (0 === this._items.lenght);
         let i = 0;
         while (!done) {
@@ -82,7 +84,7 @@ const RecentManager = new Lang.Class({
 
     getItemUri: function(item) {
         if (this.fileFullPath === true) {
-            return item.get_uri_display();
+            return item.get_uri_display().replace(this._homeRegExp, '~');
         } else {
             return item.get_display_name();
         }
