@@ -97,7 +97,7 @@ const ActionsItem = new Lang.Class({
         });
 
         let _clear = new ClearBtn();
-        _clear.connect('clicked', recentManager.clearAll);
+        _clear.connect('clicked', Lang.bind(recentManager, recentManager.clearAll));
 
         let _prefs = new PrefsBtn();
         _prefs.connect('clicked', function() {

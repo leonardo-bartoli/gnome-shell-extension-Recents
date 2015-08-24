@@ -55,7 +55,10 @@ const shortcutWidget = Lang.Class({
             GObject.TYPE_INT
         ]);
         this._shortcutIter = this._listStore.append();
-        this._listStore.set(this._shortcutIter, [SHORTCUT_COLUMN_KEY, SHORTCUT_COLUMN_MODS], [0, 0]);
+
+        let accel = settings.get_string('recents-shortcut');
+        let [_key, _mods] = (accel !== null) ? Gtk.accelerator_parse(accel) : [0];        
+        this._listStore.set(this._shortcutIter, [SHORTCUT_COLUMN_KEY, SHORTCUT_COLUMN_MODS], [_key, _mods]);
 
         this._treeView = new Gtk.TreeView({
             visible: true,
@@ -71,8 +74,16 @@ const shortcutWidget = Lang.Class({
         this._renderer.connect('accel-edited', Lang.bind(this, function(renderer, path, key, mods, hwCode) {
             let accel = Gtk.accelerator_name(key, mods);
             
+            if (accel === null) {
+                accel = Gtk.accelerator_name(0, 0);
+            }
+            settings.set_string('recents-shortcut', accel);
+            log('setting accel as: ' + accel);
+
             this._listStore.set(this._shortcutIter, [SHORTCUT_COLUMN_KEY, SHORTCUT_COLUMN_MODS], [key, mods]);
+            log('key, mods (' + key + ',' + mods + ')');
         }));
+
         this._renderer.connect("accel-cleared", Lang.bind(this, function() {
             log('!!! cleared !!!');
         }));

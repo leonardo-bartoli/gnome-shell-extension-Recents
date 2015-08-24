@@ -1,11 +1,13 @@
 const Gettext = imports.gettext;
 const Lang = imports.lang;
 
+const Atk = imports.gi.Atk;
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const Meta = imports.gi.Meta;
+const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Atk = imports.gi.Atk;
 
 const BoxPointer = imports.ui.boxpointer;
 const Main = imports.ui.main;
@@ -21,6 +23,7 @@ const FileInfoItem = Me.imports.fileInfoItem;
 const RecentManager = Me.imports.recentManager;
 const SearchItem = Me.imports.searchItem;
 const Settings = Me.imports.settings;
+
 
 const StatusIcon = new Lang.Class({
     Name: 'RecentsStatusIcon',
@@ -113,13 +116,24 @@ const RecentsIndicator = new Lang.Class({
             this._rerender();
         }));
         this._settings.connect('changed::popup-menu-width', Lang.bind(this, this._setStyle));
+
+        /*
+         this._settings.connect('changed::recents-shortcut', Lang.bind(this, function() {
+         this._unbindShortcut();
+         this._bindShortcut();
+         }));
+         */
+
+        this._bindShortcut();
     },
 
     disable: function() {
-        this._settings.disconnect('changed::items-number');
-        this._settings.disconnect('changed::case-sensitive');
-        this._settings.disconnect('changed::file-full-path');
+        this._unbindShortcut();
+        
         this._settings.disconnect('changed::popup-menu-width');
+        this._settings.disconnect('changed::file-full-path');
+        this._settings.disconnect('changed::case-sensitive');
+        this._settings.disconnect('changed::items-number');
         this.RecentManager.disconnect();
         this.destroy();
     },
@@ -164,14 +178,44 @@ const RecentsIndicator = new Lang.Class({
     _launchFile: function(a, b, c) {
         try {
             Gio.app_info_launch_default_for_uri(c, global.create_app_launch_context(0, -1));
-        }
-        catch(err) {
+        } catch(err) {
             Main.notify(_('Recent Manager'), err.message);
         }
     },
 
     _removeItem: function(self, uri) {
-        this.RecentManager.removeItem(uri);
+        try {
+            this.RecentManager.removeItem(uri);
+        } catch(err) {
+            log(err);
+        }
+    },
+
+    _shortcutHandler: function() {
+        log('test');
+    },
+    
+    _bindShortcut: function() {
+        
+        if (Main.wm.addKeybinding && Shell.ActionMode) {        // introduced in 3.8
+            Main.wm.addKeybinding('recents-shortcut',
+                                  this._settings,
+                                  Meta.KeyBindingFlags.NONE,
+                                  Shell.ActionMode.NORMAL | Shell.ActionMode.MESSAGE_TRAY,
+                                  Lang.bind(this, this._shortcutHandler));
+        } else {
+            /* TODO: fallback for older shell version */
+            log('key binding require shell version > 3.7');
+        }
+    },
+
+    _unbindShortcut: function() {
+        if (Main.wm.removeKeybinding) {  // introduced in 3.8
+            Main.wm.removeKeybinding('recents-shortcut');
+        } else {
+            /* TODO: fallback for older shell version */
+            log('key binding require shell version > 3.7');
+        }
     }
 });
 

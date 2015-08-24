@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="leonardo.bartoli.gmail.com-extensions">
   <schema path="/org/gnome/shell/extensions/recents/" id="org.gnome.shell.extensions.recents">
-    <key name="shortcut" type="as">
-      <default><![CDATA[['0','0']]]></default>
-      <summary>The manual shortcut used to open the recent items menu</summary>
+    <key name="recents-shortcut" type="s">
+      <default><![CDATA['0']]></default>
+      <summary>The shortcut used to open the recent items menu</summary>
       <description>
         The shortcut used to open the recent items popup menu.
       </description>
