@@ -44,78 +44,87 @@ const shortcutWidget = Lang.Class({
         this.parent({ orientation: Gtk.Orientation.HORIZONTAL });
         this.set_baseline_position(Gtk.BaselinePosition.TOP);
 
+        this._settings = settings;
+        this._initListStore(settings);
+        
+        let label = new Gtk.Label({ label: _('Popup Shortcut'), xalign: 0 });
+        let treeViewBox = this._newTreeViewBox(this._listStore);
+        let button = this._newDisableBtn();
+        
+	    this.pack_start(label, true, true, 0);
+        this.pack_end(button, false, false, 0);
+        this.pack_end(treeViewBox, true, true, 10);
+    },
 
-        this._label = new Gtk.Label({ label: _('Popup Shortcut'), xalign: 0 });
-
-
-
+    _initListStore: function() {
         this._listStore = new Gtk.ListStore();
         this._listStore.set_column_types([
             GObject.TYPE_INT,
             GObject.TYPE_INT
         ]);
         this._shortcutIter = this._listStore.append();
+        let _accel = this._settings.get_strv('recents-shortcut')[0];
+        let [_key, _mods] = (_accel !== null) ? Gtk.accelerator_parse(_accel) : [0, 0];
 
-        let accel = settings.get_string('recents-shortcut');
-        let [_key, _mods] = (accel !== null) ? Gtk.accelerator_parse(accel) : [0];        
         this._listStore.set(this._shortcutIter, [SHORTCUT_COLUMN_KEY, SHORTCUT_COLUMN_MODS], [_key, _mods]);
+    },
 
-        this._treeView = new Gtk.TreeView({
+    _newDisableBtn: function() {
+        let button =  Gtk.Button.new_from_icon_name('edit-delete-symbolic', Gtk.IconSize.BUTTON);
+        button.connect('clicked', Lang.bind(this, this._disableAccel));
+
+        return button;
+    },
+
+    _newTreeViewBox: function(model) {
+        let treeView = new Gtk.TreeView({
             visible: true,
             can_focus: true,
             headers_visible: false,
             search_column: 0,
-            model: this._listStore
+            model: model
         });
-        this._treeView.set_enable_search(false);
-        this._treeView.set_search_column(-1);
-        
-        this._renderer = new Gtk.CellRendererAccel({editable: true});
-        this._renderer.connect('accel-edited', Lang.bind(this, function(renderer, path, key, mods, hwCode) {
-            let accel = Gtk.accelerator_name(key, mods);
-            
-            if (accel === null) {
-                accel = Gtk.accelerator_name(0, 0);
-            }
-            settings.set_string('recents-shortcut', accel);
-            log('setting accel as: ' + accel);
+        treeView.set_enable_search(false);
+        treeView.set_search_column(-1);
 
-            this._listStore.set(this._shortcutIter, [SHORTCUT_COLUMN_KEY, SHORTCUT_COLUMN_MODS], [key, mods]);
-            log('key, mods (' + key + ',' + mods + ')');
-        }));
-
-        this._renderer.connect("accel-cleared", Lang.bind(this, function() {
-            log('!!! cleared !!!');
-        }));
+        let renderer = new Gtk.CellRendererAccel({editable: true});
+        renderer.connect('accel-edited', Lang.bind(this, this._accelEditHandler));
         
         let column = new Gtk.TreeViewColumn();
+        column.pack_start(renderer, false);
+        column.add_attribute(renderer, 'accel-key', SHORTCUT_COLUMN_KEY);
+        column.add_attribute(renderer, 'accel-mods', SHORTCUT_COLUMN_MODS);
 
-        column.pack_start(this._renderer, false);
-        column.add_attribute(this._renderer, 'accel-key', SHORTCUT_COLUMN_KEY);
-        column.add_attribute(this._renderer, 'accel-mods', SHORTCUT_COLUMN_MODS);
-        this._viewport = new Gtk.Viewport({
+        let viewport = new Gtk.Viewport({
             visible: true,
             can_focus: false,
-            hexpand: false,
+            hexpand: true,
             vexpand: false
         });
-        this._treeView.append_column(column);
-        this._viewport.child = this._treeView;
-        this._box = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL });
-        this._box.pack_start(this._viewport, true, false, 0);
 
-        
-        this._button = Gtk.Button.new_from_icon_name('edit-delete-symbolic', Gtk.IconSize.BUTTON);
-        this._button.connect('clicked', Lang.bind(this, this._disableAccel));
-        
-	    this.pack_start(this._label, true, true, 0);
-        this.pack_end(this._button, false, false, 0);
-        this.pack_end(this._box, true, true, 10);
+        treeView.append_column(column);
+        viewport.child = treeView;
+        let box = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL });
+        box.pack_start(viewport, true, false, 0);
+
+        return box;
     },
 
-    _disableAccel: function() {
-        this._listStore.set(this._shortcutIter, [SHORTCUT_COLUMN_KEY, SHORTCUT_COLUMN_MODS], [0, 0]);
+    _accelEditHandler: function(renderer, path, key, mods, hwCode) {
+        let accel = Gtk.accelerator_name(key, mods);
+        if (accel === null) {
+            accel = Gtk.accelerator_name(0, 0);
+        }
         
+        this._listStore.set(this._shortcutIter, [SHORTCUT_COLUMN_KEY, SHORTCUT_COLUMN_MODS], [key, mods]);
+        this._settings.set_strv('recents-shortcut', [accel]);
+    },
+    
+    _disableAccel: function() {
+        let accel = Gtk.accelerator_name(0, 0);
+
+        this._listStore.set(this._shortcutIter, [SHORTCUT_COLUMN_KEY, SHORTCUT_COLUMN_MODS], [0, 0]);
+        this._settings.set_strv('recents-shortcut', [accel]);
     }
 });
 
@@ -205,7 +214,3 @@ function buildPrefsWidget() {
 
 	return widget;
 }
-
-
-
-

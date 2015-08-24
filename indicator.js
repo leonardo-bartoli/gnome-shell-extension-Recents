@@ -117,19 +117,16 @@ const RecentsIndicator = new Lang.Class({
         }));
         this._settings.connect('changed::popup-menu-width', Lang.bind(this, this._setStyle));
 
-        /*
-         this._settings.connect('changed::recents-shortcut', Lang.bind(this, function() {
-         this._unbindShortcut();
-         this._bindShortcut();
-         }));
-         */
+        this._settings.connect('changed::recents-shortcut', Lang.bind(this, function() {
+            this._unbindShortcut();
+            this._bindShortcut();
+        }));
 
         this._bindShortcut();
     },
 
     disable: function() {
-        this._unbindShortcut();
-        
+        this._unbindShortcut();        
         this._settings.disconnect('changed::popup-menu-width');
         this._settings.disconnect('changed::file-full-path');
         this._settings.disconnect('changed::case-sensitive');
@@ -154,14 +151,13 @@ const RecentsIndicator = new Lang.Class({
 
         for (let i = 0; i < items.length; ++i) {
             let item = items[i];
-
             let uri = item.get_uri();
             let gicon = Gio.content_type_get_symbolic_icon(item.get_mime_type());
             let label = this.RecentManager.getItemUri(item);
             let menuItem = new FileInfoItem.FileInfoItem(gicon, label);
 
-            menuItem.connect('activate', Lang.bind(this, this._launchFile, uri ));
-            menuItem.connect('remove-item', Lang.bind(this, this._removeItem, uri ));
+            menuItem.connect('activate', Lang.bind(this, this._launchFile, uri));
+            menuItem.connect('remove-item', Lang.bind(this, this._removeItem, uri));
             
             this._body.addMenuItem(menuItem);
         }
@@ -192,11 +188,10 @@ const RecentsIndicator = new Lang.Class({
     },
 
     _shortcutHandler: function() {
-        log('test');
+        this.menu.open(true);
     },
     
-    _bindShortcut: function() {
-        
+    _bindShortcut: function() {        
         if (Main.wm.addKeybinding && Shell.ActionMode) {        // introduced in 3.8
             Main.wm.addKeybinding('recents-shortcut',
                                   this._settings,
@@ -205,16 +200,16 @@ const RecentsIndicator = new Lang.Class({
                                   Lang.bind(this, this._shortcutHandler));
         } else {
             /* TODO: fallback for older shell version */
-            log('key binding require shell version > 3.7');
+            log('key binding require shell version > 3.8');
         }
     },
 
     _unbindShortcut: function() {
-        if (Main.wm.removeKeybinding) {  // introduced in 3.8
+        if (Main.wm.removeKeybinding) {                        // introduced in 3.8
             Main.wm.removeKeybinding('recents-shortcut');
         } else {
             /* TODO: fallback for older shell version */
-            log('key binding require shell version > 3.7');
+            log('key binding require shell version > 3.8');
         }
     }
 });
