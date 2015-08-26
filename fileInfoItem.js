@@ -1,5 +1,6 @@
 const Lang = imports.lang;
 
+const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 
 const PopupMenu = imports.ui.popupMenu;
@@ -8,7 +9,7 @@ const FileInfoItem = new Lang.Class({
     Name: 'FileInfoItem',
     Extends: PopupMenu.PopupBaseMenuItem,
 
-    _init: function(gicon, uri) {
+    _init: function(gicon, label, client, uri) {
         this.parent('');
 
         this.actor.add(new St.Icon({
@@ -16,7 +17,7 @@ const FileInfoItem = new Lang.Class({
             fallback_icon_name: 'application-x-executable-symbolic',
             style_class: 'popup-menu-icon'
         }));
-        this.actor.add(new St.Label({ text: uri}), { expand: true });
+        this.actor.add(new St.Label({ text: label}), { expand: true });
 
         this._removeBtn = new St.Button();
         this._removeBtn.child = new St.Icon({
@@ -24,7 +25,13 @@ const FileInfoItem = new Lang.Class({
             style_class: 'popup-menu-icon'
         });
         this._removeBtn.connect('clicked', Lang.bind(this, function() {
-            this.emit('remove-item');
+            try {
+                client.removeItem(uri);
+                this.destroy();
+            } catch(err) {
+                log(err);
+            }
+            return Clutter.EVENT_STOP;
         }));
         this.actor.add(this._removeBtn, { x_align: St.Align.END });
     }

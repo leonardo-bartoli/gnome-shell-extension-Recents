@@ -102,7 +102,8 @@ const RecentsIndicator = new Lang.Class({
         this.menu.addMenuItem(this._footer);
 
         /* Connect signals */
-        this.RecentManager.connect(Lang.bind(this, this._rerender));
+        this._conhandler = this.RecentManager.connect('items-changed', Lang.bind(this, this._rerender));
+        
         this._settings.connect('changed::items-number', Lang.bind(this, function() {
             this.RecentManager.itemsNumber = this._settings.get_int('items-number');
             this._rerender();            
@@ -131,7 +132,7 @@ const RecentsIndicator = new Lang.Class({
         this._settings.disconnect('changed::file-full-path');
         this._settings.disconnect('changed::case-sensitive');
         this._settings.disconnect('changed::items-number');
-        this.RecentManager.disconnect();
+        this.RecentManager.disconnect(this._conhandler);
         this.destroy();
     },
 
@@ -154,11 +155,10 @@ const RecentsIndicator = new Lang.Class({
             let uri = item.get_uri();
             let gicon = Gio.content_type_get_symbolic_icon(item.get_mime_type());
             let label = this.RecentManager.getItemUri(item);
-            let menuItem = new FileInfoItem.FileInfoItem(gicon, label);
+            let menuItem = new FileInfoItem.FileInfoItem(gicon, label, this.RecentManager, uri);
 
             menuItem.connect('activate', Lang.bind(this, this._launchFile, uri));
-            menuItem.connect('remove-item', Lang.bind(this, this._removeItem, uri));
-            
+
             this._body.addMenuItem(menuItem);
         }
     },
@@ -182,6 +182,7 @@ const RecentsIndicator = new Lang.Class({
     _removeItem: function(self, uri) {
         try {
             this.RecentManager.removeItem(uri);
+            this._rerender();
         } catch(err) {
             log(err);
         }

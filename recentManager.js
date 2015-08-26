@@ -1,5 +1,6 @@
 const Lang = imports.lang;
 
+const GObject = imports.gi.GObject;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 
@@ -10,8 +11,14 @@ function escapeRegExp(str) {
 
 const RecentManager = new Lang.Class({
     Name: 'RecentManager',
+    Extends: GObject.Object,
+    Signals: {
+        'items-changed': {}
+    },
     
     _init: function(settings) {
+        this.parent();
+        
         settings = settings || {};
 
         this.itemsNumber = settings.itemsNumber;
@@ -23,6 +30,7 @@ const RecentManager = new Lang.Class({
         this._items = this.proxy.get_items();
         this._itemshandler = this.proxy.connect('changed', Lang.bind(this, function() {
             this._items = this.proxy.get_items();
+            this.emit('items-changed');
         }));
 
         this._conhandler = null;
@@ -31,16 +39,6 @@ const RecentManager = new Lang.Class({
     
     _onDestroy: function() {
         this.proxy.disconnect(this._itemshandler);
-        this.proxy.disconnect(this._conhandler);
-    },
-
-    connect: function(fn) {
-        this._conhandler = this.proxy.connect('changed', fn);
-        return this._conhandler;
-    },
-
-    disconnect: function() {
-        this.proxy.disconnect(this.conhandler);
     },
 
     removeItem: function(uri) {
@@ -49,13 +47,13 @@ const RecentManager = new Lang.Class({
 
     query: function(searchString) {
         searchString = searchString || '';
+        
         let itemsNumber = this.itemsNumber === 0 ? this._items.length : Math.min(this._items.length, this.itemsNumber);
 
         if (searchString.length === 0) {
             if (itemsNumber == this._items.length) {
                 return this._items;
             }
-
             return this._items.slice(0, itemsNumber);
         }
 
