@@ -11,7 +11,7 @@ Recent(item)s adds an indicator to gnome shell panel to quickly navigate recent 
 
 ### Installation
 
-Extention is available through e.g.o at the address:
+Extension is available through e.g.o at the address:
 
 ```
 https://extensions.gnome.org/extension/977/recent-items/
