@@ -190,6 +190,7 @@ const RecentsIndicator = new Lang.Class({
 
     _shortcutHandler: function() {
         this.menu.open(true);
+        this._searchItem.hover();
     },
     
     _bindShortcut: function() {        

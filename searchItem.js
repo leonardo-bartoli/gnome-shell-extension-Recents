@@ -50,10 +50,14 @@ const SearchItem = new Lang.Class({
     },
     
     _onTextChanged: function(se, prop) {
-        let dummy = (this.text.length == 0);
+        let dummy = (this.text.length === 0);
         this._entry.set_secondary_icon((dummy) ? null : this._clearIcon);
 
         this.emit('text-changed');
+    },
+
+    hover: function() {
+        this._entry.grab_key_focus();
     }
 });
 
