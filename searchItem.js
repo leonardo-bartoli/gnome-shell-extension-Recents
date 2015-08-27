@@ -56,7 +56,7 @@ const SearchItem = new Lang.Class({
         this.emit('text-changed');
     },
 
-    hover: function() {
+    grab_key_focus: function() {
         this._entry.grab_key_focus();
     }
 });
