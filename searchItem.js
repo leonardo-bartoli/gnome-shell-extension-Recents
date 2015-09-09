@@ -60,6 +60,3 @@ const SearchItem = new Lang.Class({
         this._entry.grab_key_focus();
     }
 });
-
-
-

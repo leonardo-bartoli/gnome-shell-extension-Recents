@@ -102,6 +102,10 @@ const RecentsIndicator = new Lang.Class({
         this.menu.addMenuItem(this._footer);
 
         /* Connect signals */
+        this.menu.connect('menu-closed', Lang.bind(this, function() {
+            this._searchItem.reset();
+        }));
+        
         this._conhandler = this.RecentManager.connect('items-changed', Lang.bind(this, this._rerender));
         
         this._settings.connect('changed::items-number', Lang.bind(this, function() {
@@ -125,7 +129,7 @@ const RecentsIndicator = new Lang.Class({
 
         this._bindShortcut();
     },
-
+    
     disable: function() {
         this._unbindShortcut();        
         this._settings.disconnect('changed::popup-menu-width');
@@ -153,9 +157,10 @@ const RecentsIndicator = new Lang.Class({
         for (let i = 0; i < items.length; ++i) {
             let item = items[i];
             let uri = item.get_uri();
+            let dirUri = this.RecentManager.getItemDirUri(item);
             let gicon = Gio.content_type_get_symbolic_icon(item.get_mime_type());
-            let label = this.RecentManager.getItemUri(item);
-            let menuItem = new FileInfoItem.FileInfoItem(gicon, label, this.RecentManager, uri);
+            let label = this.RecentManager.getItemLabel(item);
+            let menuItem = new FileInfoItem.FileInfoItem(gicon, label, dirUri, uri, this.RecentManager);
 
             menuItem.connect('activate', Lang.bind(this, this._launchFile, uri));
 

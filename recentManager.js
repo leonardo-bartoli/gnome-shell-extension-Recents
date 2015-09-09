@@ -1,13 +1,45 @@
 const Lang = imports.lang;
 
-const GObject = imports.gi.GObject;
+const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 
 
-function escapeRegExp(str) {
-    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-}
+//
+// 
+const escapeRegExp = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g;
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+const splitPathRe = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+
+const escapeSearch = function(str) {
+    return str.replace(escapeRegExp, "\\$&");
+};
+
+const splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+const dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
 
 const RecentManager = new Lang.Class({
     Name: 'RecentManager',
@@ -59,9 +91,9 @@ const RecentManager = new Lang.Class({
 
         let reg = null;
         if (this.caseSensitive) {
-            reg = new RegExp(escapeRegExp(searchString));
+            reg = new RegExp(escapeSearch(searchString));
         } else {
-            reg = new RegExp(escapeRegExp(searchString), 'i');
+            reg = new RegExp(escapeSearch(searchString), 'i');
         }
         
         let out = [];
@@ -69,7 +101,7 @@ const RecentManager = new Lang.Class({
         let i = 0;
         while (!done) {
             let item = this._items[i];
-            let uri = this.getItemUri(item);
+            let uri = this.getItemLabel(item);
             if (reg.test(uri) === true) {
                 out.push(item);
             }
@@ -80,12 +112,16 @@ const RecentManager = new Lang.Class({
         return out;
     },
 
-    getItemUri: function(item) {
+    getItemLabel: function(item) {
         if (this.fileFullPath === true) {
             return item.get_uri_display().replace(this._homeRegExp, '~');
         } else {
             return item.get_display_name();
         }
+    },
+    
+    getItemDirUri: function(item) {
+        return dirname(item.get_uri_display());
     },
     
     clearAll: function() {

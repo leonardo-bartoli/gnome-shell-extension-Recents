@@ -28,5 +28,5 @@ function enable() {
 }
 
 function disable() {
-    Main.panel.addToStatusArea.recents.disable();
+    Main.panel.statusArea.recents.disable();
 }

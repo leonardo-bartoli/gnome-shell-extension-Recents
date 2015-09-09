@@ -96,16 +96,16 @@ const ActionsItem = new Lang.Class({
             can_focus: false
         });
 
-        let _clear = new ClearBtn();
-        _clear.connect('clicked', Lang.bind(recentManager, recentManager.clearAll));
-
         let _prefs = new PrefsBtn();
         _prefs.connect('clicked', function() {
             Util.spawn(['gnome-shell-extension-prefs', 'Recents@leonardo.bartoli.gmail.com']);
         });
+
+        let _clear = new ClearBtn();
+        _clear.connect('clicked', Lang.bind(recentManager, recentManager.clearAll));
         
-        this.actor.add(_clear, { expand: true, x_fill: false });
         this.actor.add(_prefs, { expand: true, x_fill: false });
+        this.actor.add(_clear, { expand: true, x_fill: false });
     }
 });
 

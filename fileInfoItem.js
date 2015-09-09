@@ -9,10 +9,10 @@ const FileInfoItem = new Lang.Class({
     Name: 'FileInfoItem',
     Extends: PopupMenu.PopupBaseMenuItem,
 
-    _init: function(gicon, label, client, uri) {
+    _init: function(gicon, label, dirUri, uri, client) {
         this.parent('');
-
-        this.actor.add(new St.Icon({
+        
+        this.icon = this.actor.add(new St.Icon({
             gicon: gicon,
             fallback_icon_name: 'application-x-executable-symbolic',
             style_class: 'popup-menu-icon'
