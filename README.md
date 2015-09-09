@@ -22,7 +22,8 @@ Installation from git
 ```
 git clone git://github.com/leonardo-bartoli/gnome-shell-extension-Recents.git
 cd gnome-shell-extension-Recents
-cp -r caffeine@patapon.info ~/.local/share/gnome-shell/extensions
+mkdir ~/.local/share/gnome-shell/extensions/Recents@leonardo.bartoli.gmail.com
+cp -r ./ ~/.local/share/gnome-shell/extensions/Recents@leonardo.bartoli.gmail.com
 ```
 
 Restart the shell and then enable the extension.
