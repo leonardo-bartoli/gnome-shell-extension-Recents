@@ -5,9 +5,7 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 
-
-//
-// 
+// Regular expression used to escape input from search entry
 const escapeRegExp = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g;
 
 // Split a filename into [root, dir, basename, ext], unix version
