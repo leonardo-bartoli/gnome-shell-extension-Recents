@@ -2,7 +2,7 @@
 <schemalist gettext-domain="leonardo.bartoli.gmail.com-extensions">
   <schema path="/org/gnome/shell/extensions/recents/" id="org.gnome.shell.extensions.recents">
     <key name="recents-shortcut" type="as">
-      <default><![CDATA[['0']]]></default>
+      <default><![CDATA[['']]]></default>
       <summary>The shortcut used to open the recent items menu</summary>
       <description>
         The shortcut used to open the recent items popup menu.
