@@ -22,32 +22,31 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Indicator = Me.imports.indicator;
 const Settings = Me.imports.settings;
 
-let _indicator;
-let _seettings;
-
 function init() {
-    settings = new Settings.Settings();
-
-    settings.connect("changed::position", function() {
+	let _settings = new Settings.Settings();
+    
+    _settings.connect("changed::position", function() {
         disable();
         enable();
-  });
-    
+    });  
 }
 
 function enable() {
-    _indicator =  new Indicator.RecentsIndicator();
+    let settings = new Settings.Settings();
  
     let pos = 0;
-    if ('apps-menu' in Main.panel.statusArea)
-	    pos = pos + 1;
-    if ('places-menu' in Main.panel.statusArea)
+    if ('activities' in Main.panel.statusArea) {
         pos = pos + 1;
+    }
+    if ('places-menu' in Main.panel.statusArea) {
+        pos = pos + 1;
+    }
     
-    Main.panel.addToStatusArea('recents', _indicator, pos, settings.getPosition());
+    Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), pos, settings.getPosition());
 }
 
 function disable() {
-    _indicator.disable();
-    _indicator = null;
+	if (Main.panel.statusArea.recents) {
+		Main.panel.statusArea.recents.disable();
+	}
 }

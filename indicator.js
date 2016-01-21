@@ -17,7 +17,7 @@ const Tweener = imports.ui.tweener;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const Settings = Me.imports.settings;
+const 	Settings = Me.imports.settings;
 
 const ActionsItem = Me.imports.actionsItem;
 const FileInfoItem = Me.imports.fileInfoItem;
@@ -28,7 +28,7 @@ const StatusIcon = new Lang.Class({
     Name: 'RecentsStatusIcon',
     Extends: St.BoxLayout,
 
-    _init: function(setting) {
+    _init: function(settings) {
         this.parent({ style_class: 'panel-status-menu-box' });
 
         let use_icon = settings.get_boolean('use-icon'),
@@ -73,7 +73,6 @@ const PopupMenuScrollableSection = new Lang.Class({
             style_class: 'vfade',
             hscrollbar_policy: Gtk.PolicyType.NEVER,
             vscrollbar_policy: Gtk.PolicyType.NEVER
-            // vscrollbar_policy: Gtk.PolicyType.AUTOMATIC
         });
         this.actor.add_actor(this.box);
         this.actor._delegate = this;
@@ -85,10 +84,10 @@ const RecentsIndicator = new Lang.Class({
     Name: 'RecentsIndicator',
     Extends: PanelMenu.Button,
 
-    _init: function() {
+    _init: function(settings) {
         this.parent(0.0, "Recents");
 
-        this._settings = new Settings.Settings();
+        this._settings = settings;
 
         this.RecentManager = new RecentManager.RecentManager({
             itemsNumber: this._settings.get_int('items-number'),
@@ -96,8 +95,8 @@ const RecentsIndicator = new Lang.Class({
             fileFullPath: this._settings.get_boolean('file-full-path')
         });
 
+        /* Popup Menu Indicator */
         this._statusIcon = new StatusIcon(this._settings);
-        
         this.actor.add_child(this._statusIcon);
 
         /* Popup Menu header */
