@@ -1,34 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="leonardo.bartoli.gmail.com-extensions">
-  <schema path="/org/gnome/shell/extensions/recents/" id="org.gnome.shell.extensions.recents">
-    <key name="recents-shortcut" type="as">
-      <default><![CDATA[['']]]></default>
-      <summary>The shortcut used to open the recent items menu</summary>
-      <description>
-        The shortcut used to open the recent items popup menu.
-      </description>
-    </key>
-	<key name="case-sensitive" type="b">
-		<default>false</default>
-		<summary>Perform case sensitive search</summary>
-		<description>Set true to perform case sensitive search</description>
-	</key>
-	<key name="file-full-path" type="b">
-		<default>true</default>
-		<summary>Display file full path</summary>
-		<description>Set true to display file full path</description>
-	</key>
-    <key name="items-number" type="i">
-      <range min="0" max="128"/>
-	  <default>16</default>
-	  <summary>Max number of items shown</summary>
-	  <description>Set maximum number of items shown</description>
-	</key>
-	<key name="popup-menu-width" type="i">
-      <range min="400" max="1280"/>
-	  <default>608</default>
-	  <summary>Popup Menu width</summary>
-	  <description>Set Popup Menu width (in px)</description>
-	</key>
-  </schema>
+
+	<enum id='org.gnome.shell.extensions.recents.positions'>
+		<value value='0' nick='right'/>
+		<value value='1' nick='left'/>
+	</enum>
+
+	<schema path="/org/gnome/shell/extensions/recents/" id="org.gnome.shell.extensions.recents">
+		<key name="recents-shortcut" type="as">
+			<default><![CDATA[['']]]></default>
+			<summary>
+				The shortcut used to open the recent items menu
+			</summary>
+			<description>
+				The shortcut used to open the recent items popup menu.
+			</description>
+		</key>
+			
+		<key name="case-sensitive" type="b">
+			<default>false</default>
+			<summary>
+				Perform case sensitive search
+			</summary>
+			<description>
+				Set true to perform case sensitive search
+			</description>
+		</key>
+
+		<key name="file-full-path" type="b">
+			<default>true</default>
+			<summary>
+				Display file full path
+			</summary>
+			<description>
+				Set true to display file full path
+			</description>
+		</key>
+
+		<key name="items-number" type="i">
+			<range min="0" max="128"/>
+			<default>16</default>
+			<summary>
+				Max number of items shown
+			</summary>
+			<description>
+				Set maximum number of items shown
+			</description>
+		</key>
+
+		<key name="popup-menu-width" type="i">
+			<range min="400" max="1280"/>
+			<default>608</default>
+			<summary>
+				Popup Menu width
+			</summary>
+			<description>
+				Set Popup Menu width (in px)
+			</description>
+		</key>
+		
+		<key name="position" enum="org.gnome.shell.extensions.recents.positions">
+			<default>'right'</default>
+			<summary>
+				Where to display the indicator
+			</summary>
+		</key>
+		
+		<key name="use-icon" type="b">
+			<default>true</default>
+			<summary>
+				Display Indicator Icon
+			</summary>
+			<description>
+				Set true to display an icon as indicator
+			</description>
+		</key>
+		
+		<key name="label" type="s">
+			<default>'Recents'</default>
+			<summary>
+				Display Indicator String
+			</summary>
+			<description>
+				A string used as indicator, used when Display Indicator Icon is set to false
+			</description>
+		</key>
+		
+		<key name="show-arrow" type="b">
+			<default>true</default>
+			<summary>
+				Display Indicator Arrow
+			</summary>
+			<description>
+				Set true to display an arrow beside the indicator
+			</description>
+		</key>
+		
+	</schema>
 </schemalist>

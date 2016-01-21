@@ -20,13 +20,34 @@
 const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Indicator = Me.imports.indicator;
+const Settings = Me.imports.settings;
 
-function init() {}
+let _indicator;
+let _seettings;
+
+function init() {
+    settings = new Settings.Settings();
+
+    settings.connect("changed::position", function() {
+        disable();
+        enable();
+  });
+    
+}
 
 function enable() {
-    Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator());
+    _indicator =  new Indicator.RecentsIndicator();
+ 
+    let pos = 0;
+    if ('apps-menu' in Main.panel.statusArea)
+	    pos = pos + 1;
+    if ('places-menu' in Main.panel.statusArea)
+        pos = pos + 1;
+    
+    Main.panel.addToStatusArea('recents', _indicator, pos, settings.getPosition());
 }
 
 function disable() {
-    Main.panel.statusArea.recents.disable();
+    _indicator.disable();
+    _indicator = null;
 }

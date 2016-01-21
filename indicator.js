@@ -17,32 +17,48 @@ const Tweener = imports.ui.tweener;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const Settings = Me.imports.settings;
 
 const ActionsItem = Me.imports.actionsItem;
 const FileInfoItem = Me.imports.fileInfoItem;
 const RecentManager = Me.imports.recentManager;
 const SearchItem = Me.imports.searchItem;
-const Settings = Me.imports.settings;
-
 
 const StatusIcon = new Lang.Class({
     Name: 'RecentsStatusIcon',
     Extends: St.BoxLayout,
 
-    _init: function() {
+    _init: function(setting) {
         this.parent({ style_class: 'panel-status-menu-box' });
 
-        this.add_child(new St.Icon({
-            icon_name: 'document-open-recent-symbolic',
-            style_class: 'system-status-icon'
-        }));
+        let use_icon = settings.get_boolean('use-icon'),
+            label = settings.get_string('label'),
+            show_arrow = settings.get_boolean('show-arrow');
+        
+        if (use_icon) {
+            this._icon = new St.Icon({
+                icon_name: 'document-open-recent-symbolic',
+                style_class: 'system-status-icon'
+            });
+            this.add_child(this._icon);
+        } else {
+            this._label = new St.Label({
+                text: (label === undefined) ? 'Recents' : label,
+                y_expand: true,
+                y_align: Clutter.ActorAlign.CENTER
+            });
+            this.add_child(this._label);
+        }
 
-        this.add_child(new St.Icon({
-            style_class: 'popup-menu-arrow',
-            icon_name: 'pan-down-symbolic',
-            y_expand: true,
-            y_align: Clutter.ActorAlign.CENTER
-        }));
+        if (show_arrow) {
+            this._arrow = new St.Icon({
+                style_class: 'popup-menu-arrow',
+                icon_name: 'pan-down-symbolic',
+                y_expand: true,
+                y_align: Clutter.ActorAlign.CENTER
+            });
+            this.add_child(this._arrow);
+        }
     }
 });
 
@@ -72,15 +88,17 @@ const RecentsIndicator = new Lang.Class({
     _init: function() {
         this.parent(0.0, "Recents");
 
-        this._settings = new Settings.Settings(Me);
-
+        this._settings = new Settings.Settings();
 
         this.RecentManager = new RecentManager.RecentManager({
             itemsNumber: this._settings.get_int('items-number'),
             caseSensitive: this._settings.get_boolean('case-sensitive'),
             fileFullPath: this._settings.get_boolean('file-full-path')
         });
-        this.actor.add_child(new StatusIcon());
+
+        this._statusIcon = new StatusIcon(this._settings);
+        
+        this.actor.add_child(this._statusIcon);
 
         /* Popup Menu header */
         this._header = new PopupMenu.PopupMenuSection();
@@ -108,36 +126,57 @@ const RecentsIndicator = new Lang.Class({
         
         this._conhandler = this.RecentManager.connect('items-changed', Lang.bind(this, this._rerender));
         
-        this._settings.connect('changed::items-number', Lang.bind(this, function() {
-            this.RecentManager.itemsNumber = this._settings.get_int('items-number');
-            this._rerender();            
-        }));
-        this._settings.connect('changed::case-sensitive', Lang.bind(this, function() {
-            this.RecentManager.caseSensitive = this._settings.get_boolean('case-sensitive');
-            this._rerender();
-        }));
-        this._settings.connect('changed::file-full-path', Lang.bind(this, function() {
-            this.RecentManager.fileFullPath = this._settings.get_boolean('file-full-path');
-            this._rerender();
-        }));
-        this._settings.connect('changed::popup-menu-width', Lang.bind(this, this._setStyle));
-
         this._settings.connect('changed::recents-shortcut', Lang.bind(this, function() {
             this._unbindShortcut();
             this._bindShortcut();
         }));
 
+        this._settings.connect('changed::case-sensitive', Lang.bind(this, function() {
+            this.RecentManager.caseSensitive = this._settings.get_boolean('case-sensitive');
+            this._rerender();
+        }));        
+        
+        this._settings.connect('changed::file-full-path', Lang.bind(this, function() {
+            this.RecentManager.fileFullPath = this._settings.get_boolean('file-full-path');
+            this._rerender();
+        }));
+        
+        this._settings.connect('changed::items-number', Lang.bind(this, function() {
+            this.RecentManager.itemsNumber = this._settings.get_int('items-number');
+            this._rerender();            
+        }));
+
+        this._settings.connect('changed::popup-menu-width', Lang.bind(this, this._setStyle));
+
+        this._settings.connect('changed::use-icon', Lang.bind(this, function() {
+            this._statusIcon.destroy();
+            this._statusIcon = new StatusIcon(this._settings);
+            this.actor.add_child(this._statusIcon);
+        }));
+        
+        this._settings.connect('changed::label', Lang.bind(this, function() {
+            this._statusIcon.destroy();
+            this._statusIcon = new StatusIcon(this._settings);
+            this.actor.add_child(this._statusIcon);
+        }));
+        
+        this._settings.connect('changed::show-arrow', Lang.bind(this, function() {
+            this._statusIcon.destroy();
+            this._statusIcon = new StatusIcon(this._settings);
+            this.actor.add_child(this._statusIcon);
+        }));
+        
         this._bindShortcut();
     },
     
     disable: function() {
-        this._unbindShortcut();        
-        this._settings.disconnect('changed::popup-menu-width');
-        this._settings.disconnect('changed::file-full-path');
-        this._settings.disconnect('changed::case-sensitive');
-        this._settings.disconnect('changed::items-number');
+        this._unbindShortcut();
         this.RecentManager.disconnect(this._conhandler);
         this.destroy();
+    },
+
+    getPosition: function() {
+        return this._settings.getPosition();
     },
 
     _rerender: function() {

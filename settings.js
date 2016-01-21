@@ -1,5 +1,7 @@
 const Lang = imports.lang;
 const Gio = imports.gi.Gio;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 
 function getFromSchema(extension) {
 	let schema = 'org.gnome.shell.extensions.recents';
@@ -22,19 +24,24 @@ function getFromSchema(extension) {
 	}
 
 	return new Gio.Settings({settings_schema: schemaObj});
-};
+}
 
 const Settings = new Lang.Class({
     Name: 'Settings',
     Extends: Gio.Settings,
     ItemIconSize: 16,
     
-    _init: function(extension) {
+	Position: {
+		RIGHT: 0,
+		LEFT: 1,
+	},
+    
+    _init: function() {
         
 	    let schema = 'org.gnome.shell.extensions.recents';
         
 	    const GioSSS = Gio.SettingsSchemaSource;
-	    let schemaDir = extension.dir.get_child('schemas');
+	    let schemaDir = Me.dir.get_child('schemas');
 	    let schemaSource;
 	    if (schemaDir.query_exists(null)) {
 		    schemaSource = GioSSS.new_from_directory(schemaDir.get_path(),
@@ -57,10 +64,18 @@ const Settings = new Lang.Class({
         let style = '';
         
         let _popupMenuWidth = this.get_int('popup-menu-width');
-        if (_popupMenuWidth != undefined && _popupMenuWidth != 0) {
+        if (_popupMenuWidth !== undefined && _popupMenuWidth !== 0) {
             style += 'width:' + _popupMenuWidth + 'px;';
         }
        
         return style;
+    },
+
+    getPosition: function() {
+        if (this.get_enum('position') === this.Position.LEFT) {        
+	        return 'left';
+        }
+	        
+        return 'right';
     }
 });

@@ -15,7 +15,7 @@ const SHORTCUT_COLUMN_MODS = 1;
 
 function init() {}
 
-const RecetsPrefs = new Lang.Class({
+const RecentsPrefs = new Lang.Class({
     Name: 'RecentsPrefs',
     Extends: Gtk.Box,
 
@@ -33,6 +33,10 @@ const RecetsPrefs = new Lang.Class({
         this.add(new fileFullPathWidget(this._settings));
         this.add(new itemsNumberWidget(this._settings));
         this.add(new widthWidget(this._settings));
+        this.add(new positionWidget(this._settings));
+        this.add(new useIconWidget(this._settings));
+        this.add(new labelWidget(this._settings));
+        this.add(new showArrowWidget(this._settings));
     }
 });
 
@@ -147,6 +151,49 @@ const caseSensitiveWidget = Lang.Class({
     }
 });
 
+const positionWidget = Lang.Class({
+    Name: 'positionWidget',
+    Extends: Gtk.Box,
+    
+	values: [
+		{nick: 'right', name: _('Right'), id: 0 },
+		{nick: 'left', name: _('Left'), id: 1 },
+	],
+
+    _init: function(settings) {
+        this.parent({ orientation: Gtk.Orientation.HORIZONTAL });
+
+        this._label = new Gtk.Label({ label: _('Indicator Position'), xalign: 0 });
+        let model = new Gtk.ListStore();
+        model.set_column_types([GObject.TYPE_INT, GObject.TYPE_STRING]);
+        this._combo = new Gtk.ComboBox({model: model});
+        let renderer = new Gtk.CellRendererText();
+		this._combo.pack_start(renderer, true);
+		this._combo.add_attribute(renderer, 'text', 1);
+    
+        for (let i=0; i<this.values.length; i++) {
+				let item = this.values[i];
+				let iter = model.append();
+				model.set(iter, [0, 1], [this.values[i].id, this.values[i].name]);
+
+				if (item.id == settings.get_enum('position')) {
+					this._combo.set_active(item.id);
+				}
+		}
+		
+		this._combo.connect('changed', Lang.bind(this, function(entry) {
+    	    let [success, iter] = this._combo.get_active_iter();
+    	    if (!success)
+    	        return;
+
+    	    let id = model.get_value(iter, 0);
+    	    settings.set_enum('position', id);
+    	}));
+    
+	    this.pack_start(this._label, true, true, 0);
+	    this.add(this._combo);
+    }
+});
 
 const fileFullPathWidget = Lang.Class({
     Name: 'fileFullPathWidget',
@@ -206,10 +253,74 @@ const widthWidget = Lang.Class({
 	    this.pack_start(this._label, true, true, 0);
 	    this.add(this._spin);
     }
-});    
+});
+
+const useIconWidget = Lang.Class({
+    Name: 'useIconWidget',
+    Extends: Gtk.Box,
+
+    _init: function(settings) {
+        this.parent({ orientation: Gtk.Orientation.HORIZONTAL });
+
+        this._label = new Gtk.Label({ label: _('Display Indicator Icon'), xalign: 0 });
+        
+        this._switch = new Gtk.Switch({ active: settings.get_boolean('use-icon') });
+        this._switch.connect('notify::active', Lang.bind(this, function() {
+            settings.set_boolean('use-icon', this._switch.get_state());
+	    }));
+
+	    this.pack_start(this._label, true, true, 0);
+	    this.add(this._switch);
+    }
+});
+
+const labelWidget = Lang.Class({
+    Name: 'labelWidget',
+    Extends: Gtk.Box,
+
+    _init: function(settings) {
+        this.parent({ orientation: Gtk.Orientation.HORIZONTAL });
+
+        this._label = new Gtk.Label({ label: _('Display Indicator Label'), xalign: 0 });
+        this._entry = new Gtk.Entry({
+        	text: settings.get_string('label'),
+        	hexpand: true
+    	});
+        this._entry.connect('changed', Lang.bind(this, function() {
+        	let entry = this._entry.get_text();
+        	if (entry === '' || entry === undefined) {
+        		entry = 'Recents';
+        	}
+            settings.set_string('label', entry);
+	    }));
+
+	    this.pack_start(this._label, true, true, 0);
+	    this.add(this._entry);
+    }
+});
+
+
+const showArrowWidget = Lang.Class({
+    Name: 'showArrowWidget',
+    Extends: Gtk.Box,
+
+    _init: function(settings) {
+        this.parent({ orientation: Gtk.Orientation.HORIZONTAL });
+
+        this._label = new Gtk.Label({ label: _('Display Indicator Arrow'), xalign: 0 });
+        
+        this._switch = new Gtk.Switch({ active: settings.get_boolean('show-arrow') });
+        this._switch.connect('notify::active', Lang.bind(this, function() {
+            settings.set_boolean('show-arrow', this._switch.get_state());
+	    }));
+
+	    this.pack_start(this._label, true, true, 0);
+	    this.add(this._switch);
+    }
+});
 
 function buildPrefsWidget() {
-    let widget = new RecetsPrefs(new Settings.Settings(Me));
+    let widget = new RecentsPrefs(new Settings.Settings());
     widget.show_all();
 
 	return widget;
