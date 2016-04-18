@@ -17,7 +17,7 @@ const Tweener = imports.ui.tweener;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const 	Settings = Me.imports.settings;
+const Settings = Me.imports.settings;
 
 const ActionsItem = Me.imports.actionsItem;
 const FileInfoItem = Me.imports.fileInfoItem;
@@ -152,7 +152,7 @@ const RecentsIndicator = new Lang.Class({
             this._statusIcon = new StatusIcon(this._settings);
             this.actor.add_child(this._statusIcon);
         }));
-        
+                
         this._settings.connect('changed::label', Lang.bind(this, function() {
             this._statusIcon.destroy();
             this._statusIcon = new StatusIcon(this._settings);

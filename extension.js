@@ -22,18 +22,14 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Indicator = Me.imports.indicator;
 const Settings = Me.imports.settings;
 
-function init() {
-	let _settings = new Settings.Settings();
-    
-    _settings.connect("changed::position", function() {
-        disable();
-        enable();
-    });  
-}
-
 function enable() {
     let settings = new Settings.Settings();
- 
+
+	settings.connect("changed::position", function() {
+        disable();
+        enable();
+    });
+    
     let pos = 0;
     if ('activities' in Main.panel.statusArea) {
         pos = pos + 1;
