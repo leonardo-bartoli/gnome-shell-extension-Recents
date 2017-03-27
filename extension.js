@@ -22,6 +22,8 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Indicator = Me.imports.indicator;
 const Settings = Me.imports.settings;
 
+var settings;
+
 function disable() {
 	if (Main.panel.statusArea.recents) {
 		Main.panel.statusArea.recents.disable();
@@ -29,12 +31,6 @@ function disable() {
 }
 
 function enable() {
-    let settings = new Settings.Settings();
-
-	settings.connect("changed::position", function() {
-        disable();
-        enable();
-    });
     
     let pos = 0;
     if ('activities' in Main.panel.statusArea) {
@@ -47,4 +43,11 @@ function enable() {
     Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), pos, settings.getPosition());
 }
 
-function init() {}
+function init() {
+	settings = new Settings.Settings();
+
+	settings.connect("changed::position", function() {
+        disable();
+        enable();
+    });
+}
