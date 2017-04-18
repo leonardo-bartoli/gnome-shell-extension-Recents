@@ -3,7 +3,7 @@ const _ = Gettext.gettext;
 
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
-const St = imports.gi.St;
+// const St = imports.gi.St;
 
 const Lang = imports.lang;
 
