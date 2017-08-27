@@ -24,14 +24,31 @@ const Settings = Me.imports.settings;
 
 function disable() {
 	if (Main.panel.statusArea.recents) {
-		Main.panel.statusArea.recents.disable();
+		Main.panel.statusArea.recents.destroy();
 	}
 }
 
 function enable() {
 	var settings = new Settings.Settings();
 	let position = settings.getPosition();
-    Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), position == 'right' ? 0 : -1, position);
+	
+	if (position == "left") {
+		
+		var pos = 1;
+		
+		if ('apps-menu' in Main.panel.statusArea) {
+			pos++;
+		}
+		
+		if ('places-menu' in Main.panel.statusArea) {
+			pos++;
+		}
+	}
+	else {
+		var pos = 0;
+	}
+	
+	Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), pos, position);
 }
 
 function init() {
