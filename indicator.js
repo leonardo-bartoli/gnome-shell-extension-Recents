@@ -151,26 +151,6 @@ const RecentsIndicator = new Lang.Class({
             this.actor.add_child(this._statusIcon);
         }));
 
-        this._settings.connect("changed::position", Lang.bind(this, function() {
-            this.container.get_parent().remove_actor(this.container);
-
-            let boxes = {
-                left: Main.panel._leftBox,
-                right: Main.panel._rightBox
-            };
-
-            let positionInPanel = 1;
-            if ('activities' in Main.panel.statusArea) {
-                positionInPanel++;
-            }
-            if ('places-menu' in Main.panel.statusArea) {
-                positionInPanel++;
-            }
-
-            let position = this._settings.getPosition();
-            boxes[position].insert_child_at_index(this.container, position == 'right' ? 0 : positionInPanel);
-        }));
-
         this._bindShortcut();
     },
 

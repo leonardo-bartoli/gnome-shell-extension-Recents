@@ -18,13 +18,34 @@
  */
 
 const Main = imports.ui.main;
+const Lang = imports.lang;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Indicator = Me.imports.indicator;
 const Settings = Me.imports.settings;
 
+function posCheck(position) {
+	let positionInPanel = 1
+
+	if (position == "left") {
+		if ('apps-menu' in Main.panel.statusArea) {
+			positionInPanel++;
+		}
+		
+		if ('places-menu' in Main.panel.statusArea) {
+			positionInPanel++;
+		}
+	}
+	else {
+		positionInPanel = 0;
+	}
+	
+	return positionInPanel;
+}
+
 function disable() {
 	if (Main.panel.statusArea.recents) {
-		Main.panel.statusArea.recents.destroy();
+		// Make sure to use disable() since it unbinds the shortcut and does some signal disconnection handling
+		Main.panel.statusArea.recents.disable();
 	}
 }
 
@@ -32,23 +53,14 @@ function enable() {
 	var settings = new Settings.Settings();
 	let position = settings.getPosition();
 	
-	if (position == "left") {
-		
-		var pos = 1;
-		
-		if ('apps-menu' in Main.panel.statusArea) {
-			pos++;
-		}
-		
-		if ('places-menu' in Main.panel.statusArea) {
-			pos++;
-		}
-	}
-	else {
-		var pos = 0;
-	}
+	settings.connect("changed::position", Lang.bind(this, function() {
+		// Use disable() here too
+		Main.panel.statusArea.recents.disable();
+		let position = settings.getPosition();
+		Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), posCheck(position), position);
+	}));
 	
-	Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), pos, position);
+	Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), posCheck(position), position);
 }
 
 function init() {
