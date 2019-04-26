@@ -5,12 +5,10 @@ const St = imports.gi.St;
 
 const PopupMenu = imports.ui.popupMenu;
 
-const FileInfoItem = new Lang.Class({
-    Name: 'FileInfoItem',
-    Extends: PopupMenu.PopupBaseMenuItem,
+var FileInfoItem = class extends PopupMenu.PopupBaseMenuItem {
 
-    _init: function(gicon, label, dirUri, uri, client) {
-        this.parent('');
+    constructor(gicon, label, dirUri, uri, client) {
+        super();
         
         this.icon = this.actor.add(new St.Icon({
             gicon: gicon,
@@ -35,4 +33,4 @@ const FileInfoItem = new Lang.Class({
         }));
         this.actor.add(this._removeBtn, { x_align: St.Align.END });
     }
-});
+};

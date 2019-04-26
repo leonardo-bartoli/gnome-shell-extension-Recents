@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this extension; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
+*/
 
 const Main = imports.ui.main;
 const Lang = imports.lang;
@@ -23,45 +23,49 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Indicator = Me.imports.indicator;
 const Settings = Me.imports.settings;
 
-function posCheck(position) {
-	let positionInPanel = 1
 
-	if (position == "left") {
-		if ('apps-menu' in Main.panel.statusArea) {
-			positionInPanel++;
-		}
-		
-		if ('places-menu' in Main.panel.statusArea) {
-			positionInPanel++;
-		}
-	}
-	else {
-		positionInPanel = 0;
-	}
-	
-	return positionInPanel;
+function posCheck(position) {
+    let positionInPanel = 1;
+
+    if (position == 'left') {
+        if ('apps-menu' in Main.panel.statusArea) {
+            positionInPanel++;
+        }
+
+        if ('places-menu' in Main.panel.statusArea) {
+            positionInPanel++;
+        }
+    } else {
+        positionInPanel = 0;
+    }
+
+    return positionInPanel;
 }
 
+var _indicator;
+var _settings = Settings.getSettings();
+
+function init() {}
+
 function disable() {
-	if (Main.panel.statusArea.recents) {
-		// Make sure to use disable() since it unbinds the shortcut and does some signal disconnection handling
-		Main.panel.statusArea.recents.disable();
-	}
+    if (_indicator) {
+        _indicator.destroy();
+        _indicator = null;
+    }
 }
 
 function enable() {
-	var settings = new Settings.Settings();
-	let position = settings.getPosition();
-	
-	settings.connect("changed::position", Lang.bind(this, function() {
-		// Use disable() here too
-		Main.panel.statusArea.recents.disable();
-		let position = settings.getPosition();
-		Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), posCheck(position), position);
-	}));
-	
-	Main.panel.addToStatusArea('recents', new Indicator.RecentsIndicator(settings), posCheck(position), position);
+    let position = Settings.getPosition();
+
+    _settings.connect('changed::position', Lang.bind(this, function() {
+        // _indicator.destroy();
+        let position = Settings.getPosition();
+        // _indicator = new Indicator.RecentsIndicator();
+        delete Main.panel.statusArea['recents'];
+        Main.panel.addToStatusArea('recents', _indicator, posCheck(position), position);
+    }));
+
+    _indicator = new Indicator.RecentsIndicator();
+    Main.panel.addToStatusArea('recents', _indicator, posCheck(position), position);
 }
 
-function init() {
-}

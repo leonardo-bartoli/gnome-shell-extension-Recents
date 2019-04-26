@@ -9,12 +9,10 @@ const Util = imports.misc.util;
 const PopupMenu = imports.ui.popupMenu;
 
 
-const InfoBtn = new Lang.Class({
-    Name: 'InfoBtn',
-    Extends: St.Button,
+var InfoBtn = class InfoBtnClass extends St.Button {
 
-    _init: function() {
-        this.parent({
+    constructor() {
+        super({
             reactive: true,
             can_focus: true,
             track_hover: true,
@@ -25,14 +23,11 @@ const InfoBtn = new Lang.Class({
             icon_name: 'dialog-information-symbolic'
         });
     }
-});
+};
 
-const ClearBtn = new Lang.Class({
-    Name: 'ClearBtn',
-    Extends: St.Button,
-
-    _init: function() {
-        this.parent({
+var ClearBtn = class ClearBtnClass extends St.Button {
+    constructor() {
+        super({
             reactive: true,
             can_focus: true,
             track_hover: true,
@@ -43,14 +38,11 @@ const ClearBtn = new Lang.Class({
             icon_name: 'edit-clear-all-symbolic'
         });
     }
-});
+};
 
-const PrefsBtn = new Lang.Class({
-    Name: 'PrefsBtn',
-    Extends: St.Button,
-
-    _init: function() {
-        this.parent({
+var PrefsBtn = class PrefsBtnClass extends St.Button {
+    constructor() {
+        super({
             reactive: true,
             can_focus: true,
             track_hover: true,
@@ -61,14 +53,12 @@ const PrefsBtn = new Lang.Class({
             icon_name: 'preferences-system-symbolic'
         });
     }
-});
+};
 
-const ClearBtnItem = new Lang.Class({
-    Name: 'ClearBtnItem',
-    Extends: St.BoxLayout,
+var ClearBtnItem = class ClearBtnItemClass extends St.BoxLayout {
 
-    _init: function() {
-        this.parent({ style_class: 'popup-menu-item' });
+    constructor() {
+        super({ style_class: 'popup-menu-item' });
         
         let _icon =  new St.Icon({
             icon_name: 'edit-clear-all-symbolic',
@@ -84,14 +74,12 @@ const ClearBtnItem = new Lang.Class({
         this.add_child(_icon);
         this.add_child(_label);
     }
-});
+};
 
-const ActionsItem = new Lang.Class({
-    Name: 'ActionsItem',
-    Extends: PopupMenu.PopupBaseMenuItem,
+var ActionsItem = class ActionsItemClass extends PopupMenu.PopupBaseMenuItem {
 
-    _init: function(recentManager) {
-        this.parent({
+    constructor(recentManager) {
+        super({
             reactive: false,
             can_focus: false
         });
@@ -102,14 +90,10 @@ const ActionsItem = new Lang.Class({
         });
 
         let _clear = new ClearBtn();
-        _clear.connect('clicked', Lang.bind(recentManager, recentManager.clearAll));
+        _clear.connect('clicked', recentManager.clearAll.bind(recentManager));
         
         this.actor.add(_prefs, { expand: true, x_fill: false });
         this.actor.add(_clear, { expand: true, x_fill: false });
     }
-});
-
-
-
-
+};
 

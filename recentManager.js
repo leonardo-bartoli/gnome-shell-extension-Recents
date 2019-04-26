@@ -13,116 +13,116 @@ const escapeRegExp = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g;
 const splitPathRe = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
 
 const escapeSearch = function(str) {
-    return str.replace(escapeRegExp, "\\$&");
+    return str.replace(escapeRegExp, '\\$&');
 };
 
-const splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
+function splitPath(filename) {
+    return splitPathRe.exec(filename).slice(1);
+}
 
-const dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
+function dirname(path) {
+    var result = splitPath(path),
+        root = result[0],
+        dir = result[1];
 
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
+    if (!root && !dir) {
+        // No dirname whatsoever
+        return '.';
+    }
 
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
+    if (dir) {
+        // It has a dirname, strip trailing slash
+        dir = dir.substr(0, dir.length - 1);
+    }
 
-  return root + dir;
-};
+    return root + dir;
+}
 
-
-const RecentManager = new Lang.Class({
-    Name: 'RecentManager',
-    Extends: GObject.Object,
-    Signals: {
-        'items-changed': {}
+var RecentManager = GObject.registerClass(
+    {
+        Signals: {
+            'items-changed': {}
+        }
     },
-    
-    _init: function(settings) {
-        this.parent();
-        
-        settings = settings || {};
+    class RecentManager extends GObject.Object {
 
-        this.itemsNumber = settings.itemsNumber;
-        this.caseSensitive = settings.caseSensitive;
-        this.fileFullPath = settings.fileFullPath;
-        
-        this.proxy = new Gtk.RecentManager();
+        _init(settings) {
+            super._init();
 
-        this._items = this.proxy.get_items();
-        this._itemshandler = this.proxy.connect('changed', Lang.bind(this, function() {
+            settings = settings || {};
+
+            this.itemsNumber = settings.itemsNumber;
+            this.caseSensitive = settings.caseSensitive;
+            this.fileFullPath = settings.fileFullPath;
+
+            this.proxy = new Gtk.RecentManager();
+
             this._items = this.proxy.get_items();
-            this.emit('items-changed');
-        }));
+            this._itemshandler = this.proxy.connect('changed', Lang.bind(this, function() {
+                this._items = this.proxy.get_items();
+                this.emit('items-changed');
+            }));
 
-        this._conhandler = null;
-        this._homeRegExp = new RegExp('^(' + GLib.get_home_dir() + ')');
-    },
-    
-    _onDestroy: function() {
-        this.proxy.disconnect(this._itemshandler);
-    },
+            this._conhandler = null;
+            this._homeRegExp = new RegExp('^(' + GLib.get_home_dir() + ')');
+        }
 
-    removeItem: function(uri) {
-        return this.proxy.remove_item(uri);
-    },
+        _onDestroy() {
+            this.proxy.disconnect(this._itemshandler);
+        }
 
-    query: function(searchString) {
-        searchString = searchString || '';
-        
-        let itemsNumber = this.itemsNumber === 0 ? this._items.length : Math.min(this._items.length, this.itemsNumber);
+        removeItem(uri) {
+            return this.proxy.remove_item(uri);
+        }
 
-        if (searchString.length === 0) {
-            if (itemsNumber == this._items.length) {
-                return this._items;
+        query(searchString) {
+            searchString = searchString || '';
+
+            let itemsNumber = this.itemsNumber === 0 ? this._items.length : Math.min(this._items.length, this.itemsNumber);
+
+            if (searchString.length === 0) {
+                if (itemsNumber == this._items.length) {
+                    return this._items;
+                }
+                return this._items.slice(0, itemsNumber);
             }
-            return this._items.slice(0, itemsNumber);
-        }
 
-        let reg = null;
-        if (this.caseSensitive) {
-            reg = new RegExp(escapeSearch(searchString));
-        } else {
-            reg = new RegExp(escapeSearch(searchString), 'i');
-        }
-        
-        let out = [];
-        let done = (0 === this._items.lenght);
-        let i = 0;
-        while (!done) {
-            let item = this._items[i];
-            let uri = this.getItemLabel(item);
-            if (reg.test(uri) === true) {
-                out.push(item);
+            let reg = null;
+            if (this.caseSensitive) {
+                reg = new RegExp(escapeSearch(searchString));
+            } else {
+                reg = new RegExp(escapeSearch(searchString), 'i');
             }
             
-            i++;
-            done = (i === this._items.length) || (out.length === itemsNumber);
-        }
-        return out;
-    },
+            let out = [];
+            let done = (0 === this._items.lenght);
+            let i = 0;
+            while (!done) {
+                let item = this._items[i];
+                let uri = this.getItemLabel(item);
+                if (reg.test(uri) === true) {
+                    out.push(item);
+                }
 
-    getItemLabel: function(item) {
-        if (this.fileFullPath === true) {
-            return item.get_uri_display().replace(this._homeRegExp, '~');
-        } else {
-            return item.get_display_name();
+                i++;
+                done = (i === this._items.length) || (out.length === itemsNumber);
+            }
+            return out;
         }
-    },
-    
-    getItemDirUri: function(item) {
-        return dirname(item.get_uri_display());
-    },
-    
-    clearAll: function() {
-        this.proxy.purge_items();
-    }
-});
+
+        getItemLabel(item) {
+            if (this.fileFullPath === true) {
+                return item.get_uri_display().replace(this._homeRegExp, '~');
+            } else {
+                return item.get_display_name();
+            }
+        }
+
+        getItemDirUri(item) {
+            return dirname(item.get_uri_display());
+        }
+
+        clearAll() {
+            this.proxy.purge_items();
+        }
+    });
