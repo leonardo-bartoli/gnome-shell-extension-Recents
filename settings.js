@@ -3,7 +3,30 @@ const Gio = imports.gi.Gio;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-var _settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.recents');
+
+function getFromSchema(schema) {
+
+    const GioSSS = Gio.SettingsSchemaSource;
+    let schemaDir = Me.dir.get_child('schemas');
+    let schemaSource;
+    if (schemaDir.query_exists(null)) {
+        schemaSource = GioSSS.new_from_directory(schemaDir.get_path(),
+                                                 GioSSS.get_default(),
+                                                 false);
+    } else {
+        schemaSource = GioSSS.get_default();
+    }
+
+    let schemaObj = schemaSource.lookup(schema, true);
+    if (!schemaObj) {
+        throw new Error('Schema ' + schema + ' could not be found for extension ' +
+		                extension.metadata.uuid + '. Please check your installation.');
+    }
+
+    return new Gio.Settings({settings_schema: schemaObj});
+}
+
+var _settings = getFromSchema('org.gnome.shell.extensions.recents');
 
 const _POSITION = {
     RIGHT: 0,
