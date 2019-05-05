@@ -8,6 +8,7 @@ Recent(item)s adds an indicator to gnome shell panel to quickly navigate recent 
 - ability to remove individual items
 - search box
 - support shortcut to open indicator menu
+- open containing folder on right click
 
 ### Installation
 
