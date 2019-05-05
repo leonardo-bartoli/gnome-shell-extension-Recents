@@ -208,9 +208,13 @@ var RecentsIndicator = GObject.registerClass(
             this.menu.box.style = Settings.getPopupMenuStyle();
         }
 
-        _launchFile(a, b, c) {
+        _launchFile(a, event, uri) {
+            if (event.get_button() == 3) {
+                uri = Gio.Vfs.get_default().get_file_for_uri(uri).get_parent().get_uri();
+            }
+
             try {
-                Gio.app_info_launch_default_for_uri(c, global.create_app_launch_context(0, -1));
+                Gio.app_info_launch_default_for_uri(uri, global.create_app_launch_context(0, -1));
             } catch (err) {
                 Main.notify(_('Recent Manager'), err.message);
             }
