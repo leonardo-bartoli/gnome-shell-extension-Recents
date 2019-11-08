@@ -4,7 +4,7 @@
     "description": "Add an indicator in top panel to list recently opened files",
     "settings-schema": "org.gnome.shell.extensions.recents",
     "shell-version": [
-        "3.32"
+        "3.32", "3.34"
     ],
     "url": "https://github.com/leonardo-bartoli/gnome-shell-extension-Recents",
     "version": 11
