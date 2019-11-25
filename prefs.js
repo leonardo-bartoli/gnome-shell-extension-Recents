@@ -11,10 +11,10 @@ const Settings = Me.imports.settings;
 const SHORTCUT_COLUMN_KEY  = 0;
 const SHORTCUT_COLUMN_MODS = 1;
 
-var RecentsPrefs = class extends Gtk.Box {
+var RecentsPrefs = GObject.registerClass(class extends Gtk.Box {
 
-    constructor(settings) {
-        super({
+    _init(settings) {
+        super._init({
             orientation: Gtk.Orientation.VERTICAL,
             spacing: 10,
             margin: 10
@@ -32,7 +32,7 @@ var RecentsPrefs = class extends Gtk.Box {
         this.add(new labelWidget(this._settings));
         this.add(new showArrowWidget(this._settings));
     }
-};
+});
 
 function shortcutTreeViewBox(model, handler) {
     let treeView = new Gtk.TreeView({
@@ -69,8 +69,7 @@ function shortcutTreeViewBox(model, handler) {
 }
 
 
-var shortcutWidget = GObject.registerClass(
-    class shortcutWidget extends Gtk.Box {
+var shortcutWidget = GObject.registerClass(class shortcutWidgetClass extends Gtk.Box {
 
         _init(settings) {
             super._init({ orientation: Gtk.Orientation.HORIZONTAL });
@@ -124,10 +123,10 @@ var shortcutWidget = GObject.registerClass(
     }
 );
 
-var caseSensitiveWidget = class extends Gtk.Box {
+var caseSensitiveWidget = GObject.registerClass(class caseSensitiveWidgetClass extends Gtk.Box {
 
-    constructor(settings) {
-        super({ orientation: Gtk.Orientation.HORIZONTAL });
+    _init(settings) {
+        super._init({ orientation: Gtk.Orientation.HORIZONTAL });
 
         this._label = new Gtk.Label({ label: _('Case Sensitive Search'), xalign: 0 });
         
@@ -139,12 +138,12 @@ var caseSensitiveWidget = class extends Gtk.Box {
         this.pack_start(this._label, true, true, 0);
         this.add(this._switch);
     }
-};
+});
 
-var positionWidget = class extends Gtk.Box {
+var positionWidget = GObject.registerClass(class positionWidgetClass extends Gtk.Box {
     
-    constructor(settings) {
-        super({ orientation: Gtk.Orientation.HORIZONTAL });
+    _init(settings) {
+        super._init({ orientation: Gtk.Orientation.HORIZONTAL });
 
         this.values = [
             {nick: 'right', name: _('Right'), id: 0 },
@@ -181,12 +180,12 @@ var positionWidget = class extends Gtk.Box {
         this.pack_start(this._label, true, true, 0);
         this.add(this._combo);
     }
-};
+});
 
-var fileFullPathWidget = class extends Gtk.Box {
+var fileFullPathWidget = GObject.registerClass(class fileFullPathWidgetClass extends Gtk.Box {
 
-    constructor(settings) {
-        super({ orientation: Gtk.Orientation.HORIZONTAL });
+    _init(settings) {
+        super._init({ orientation: Gtk.Orientation.HORIZONTAL });
 
         this._label = new Gtk.Label({ label: _('Display File Full Path'), xalign: 0 });
         
@@ -198,12 +197,12 @@ var fileFullPathWidget = class extends Gtk.Box {
         this.pack_start(this._label, true, true, 0);
         this.add(this._switch);
     }
-};
+});
 
-var itemsNumberWidget = class extends Gtk.Box {
+var itemsNumberWidget = GObject.registerClass(class itemsNumberWidgetClass extends Gtk.Box {
 
-    constructor(settings) {
-        super({ orientation: Gtk.Orientation.HORIZONTAL });
+    _init(settings) {
+        super._init({ orientation: Gtk.Orientation.HORIZONTAL });
 
         this._label = new Gtk.Label({ label: _('Number Of Items'), xalign: 0 });
         
@@ -216,12 +215,12 @@ var itemsNumberWidget = class extends Gtk.Box {
         this.pack_start(this._label, true, true, 0);
         this.add(this._spin);
     }
-};
+});
 
-var widthWidget = class extends Gtk.Box {
+var widthWidget = GObject.registerClass(class widthWidgetClass extends Gtk.Box {
 
-    constructor(settings) {
-        super({ orientation: Gtk.Orientation.HORIZONTAL });
+    _init(settings) {
+        super._init({ orientation: Gtk.Orientation.HORIZONTAL });
         
         this._label = new Gtk.Label({ label: _('Popup Menu Width'), xalign: 0 });
 
@@ -235,12 +234,12 @@ var widthWidget = class extends Gtk.Box {
         this.pack_start(this._label, true, true, 0);
         this.add(this._spin);
     }
-};
+});
 
-var useIconWidget = class extends Gtk.Box {
+var useIconWidget = GObject.registerClass(class useIconWidgetClass extends Gtk.Box {
 
-    constructor(settings) {
-        super({ orientation: Gtk.Orientation.HORIZONTAL });
+    _init(settings) {
+        super._init({ orientation: Gtk.Orientation.HORIZONTAL });
 
         this._label = new Gtk.Label({ label: _('Display Indicator Icon'), xalign: 0 });
         
@@ -252,12 +251,12 @@ var useIconWidget = class extends Gtk.Box {
         this.pack_start(this._label, true, true, 0);
         this.add(this._switch);
     }
-};
+});
 
-var labelWidget = class extends Gtk.Box {
+var labelWidget = GObject.registerClass(class labelWidgetClass extends Gtk.Box {
 
-    constructor(settings) {
-        super({ orientation: Gtk.Orientation.HORIZONTAL });
+    _init(settings) {
+        super._init({ orientation: Gtk.Orientation.HORIZONTAL });
 
         this._label = new Gtk.Label({ label: _('Display Indicator Label'), xalign: 0 });
         this._entry = new Gtk.Entry({
@@ -275,13 +274,13 @@ var labelWidget = class extends Gtk.Box {
         this.pack_start(this._label, true, true, 0);
         this.add(this._entry);
     }
-};
+});
 
 
-var showArrowWidget = class extends Gtk.Box {
+var showArrowWidget = GObject.registerClass(class showArrowWidgetClass extends Gtk.Box {
 
-    constructor(settings) {
-        super({ orientation: Gtk.Orientation.HORIZONTAL });
+    _init(settings) {
+        super._init({ orientation: Gtk.Orientation.HORIZONTAL });
 
         this._label = new Gtk.Label({ label: _('Display Indicator Arrow'), xalign: 0 });
         
@@ -293,7 +292,7 @@ var showArrowWidget = class extends Gtk.Box {
         this.pack_start(this._label, true, true, 0);
         this.add(this._switch);
     }
-};
+});
 
 function init() {}
 
