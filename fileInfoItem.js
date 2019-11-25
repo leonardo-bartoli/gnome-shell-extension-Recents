@@ -1,14 +1,13 @@
 const Lang = imports.lang;
-
 const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
-
 const PopupMenu = imports.ui.popupMenu;
+const GObject = imports.gi.GObject;
 
-var FileInfoItem = class extends PopupMenu.PopupBaseMenuItem {
+var FileInfoItem = GObject.registerClass(class FileInfoItemClass extends PopupMenu.PopupBaseMenuItem {
 
-    constructor(gicon, label, dirUri, uri, client) {
-        super();
+    _init(gicon, label, dirUri, uri, client) {
+        super._init();
         
         this.icon = this.actor.add(new St.Icon({
             gicon: gicon,
@@ -33,4 +32,4 @@ var FileInfoItem = class extends PopupMenu.PopupBaseMenuItem {
         }));
         this.actor.add(this._removeBtn, { x_align: St.Align.END });
     }
-};
+});

@@ -27,10 +27,9 @@ const SearchItem = Me.imports.searchItem;
 const Settings = Me.imports.settings;
 
 
-
-const StatusIcon = class StatusIconClass extends St.BoxLayout {
-    constructor(settings) {
-        super({style_class: 'panel-status-menu-box'});
+var StatusIcon = GObject.registerClass(class StatusIconClass extends St.BoxLayout {
+    _init(settings) {
+        super._init({style_class: 'panel-status-menu-box'});
 
         let use_icon = settings.get_boolean('use-icon'),
             label = settings.get_string('label'),
@@ -55,9 +54,9 @@ const StatusIcon = class StatusIconClass extends St.BoxLayout {
             this.add_child(this._arrow);
         }
     }
-};
+});
 
-const PopupMenuScrollableSection = class PopupMenuScrollableSectionClass extends PopupMenu.PopupMenuSection {
+class PopupMenuScrollableSection extends PopupMenu.PopupMenuSection {
     constructor() {
         super();
 
@@ -68,8 +67,7 @@ const PopupMenuScrollableSection = class PopupMenuScrollableSectionClass extends
     }
 };
 
-var RecentsIndicator = GObject.registerClass(
-    class RecentsIndicator extends PanelMenu.Button {
+var RecentsIndicator = GObject.registerClass(class RecentsIndicatorClass extends PanelMenu.Button {
 
         _init() {
             super._init(0.0, 'Recents');

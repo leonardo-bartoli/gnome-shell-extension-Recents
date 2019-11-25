@@ -1,18 +1,15 @@
 const Gettext = imports.gettext;
 const Lang = imports.lang;
-
 const St = imports.gi.St;
 const Clutter = imports.gi.Clutter;
-
 const Util = imports.misc.util;
-
 const PopupMenu = imports.ui.popupMenu;
+const GObject = imports.gi.GObject;
 
+var InfoBtn = GObject.registerClass(class InfoBtnClass extends St.Button {
 
-var InfoBtn = class InfoBtnClass extends St.Button {
-
-    constructor() {
-        super({
+    _init() {
+        super._init({
             reactive: true,
             can_focus: true,
             track_hover: true,
@@ -23,11 +20,11 @@ var InfoBtn = class InfoBtnClass extends St.Button {
             icon_name: 'dialog-information-symbolic'
         });
     }
-};
+});
 
-var ClearBtn = class ClearBtnClass extends St.Button {
-    constructor() {
-        super({
+var ClearBtn = GObject.registerClass(class ClearBtnClass extends St.Button {
+    _init() {
+        super._init({
             reactive: true,
             can_focus: true,
             track_hover: true,
@@ -38,11 +35,11 @@ var ClearBtn = class ClearBtnClass extends St.Button {
             icon_name: 'edit-clear-all-symbolic'
         });
     }
-};
+});
 
-var PrefsBtn = class PrefsBtnClass extends St.Button {
-    constructor() {
-        super({
+var PrefsBtn = GObject.registerClass(class PrefsBtnClass extends St.Button {
+    _init() {
+        super._init({
             reactive: true,
             can_focus: true,
             track_hover: true,
@@ -53,12 +50,12 @@ var PrefsBtn = class PrefsBtnClass extends St.Button {
             icon_name: 'preferences-system-symbolic'
         });
     }
-};
+});
 
-var ClearBtnItem = class ClearBtnItemClass extends St.BoxLayout {
+var ClearBtnItem = GObject.registerClass(class ClearBtnItemClass extends St.BoxLayout {
 
-    constructor() {
-        super({ style_class: 'popup-menu-item' });
+    _init() {
+        super._init({ style_class: 'popup-menu-item' });
         
         let _icon =  new St.Icon({
             icon_name: 'edit-clear-all-symbolic',
@@ -74,12 +71,12 @@ var ClearBtnItem = class ClearBtnItemClass extends St.BoxLayout {
         this.add_child(_icon);
         this.add_child(_label);
     }
-};
+});
 
-var ActionsItem = class ActionsItemClass extends PopupMenu.PopupBaseMenuItem {
+var ActionsItem = GObject.registerClass(class ActionsItemClass extends PopupMenu.PopupBaseMenuItem {
 
-    constructor(recentManager) {
-        super({
+    _init(recentManager) {
+        super._init({
             reactive: false,
             can_focus: false
         });
@@ -95,5 +92,5 @@ var ActionsItem = class ActionsItemClass extends PopupMenu.PopupBaseMenuItem {
         this.actor.add(_prefs, { expand: true, x_fill: false });
         this.actor.add(_clear, { expand: true, x_fill: false });
     }
-};
+});
 

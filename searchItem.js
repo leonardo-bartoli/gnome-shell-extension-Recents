@@ -1,13 +1,13 @@
 const St = imports.gi.St;
 const Lang = imports.lang;
-
 const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
+const GObject = imports.gi.GObject;
 
-var SearchItem = class SearchItemClass extends PopupMenu.PopupBaseMenuItem {
+var SearchItem = GObject.registerClass(class SearchItemClass extends PopupMenu.PopupBaseMenuItem {
     
-    constructor() {
-        super({
+    _init() {
+        super._init({
             activate: false,
             reactive: true,
             can_focus: false
@@ -68,4 +68,4 @@ var SearchItem = class SearchItemClass extends PopupMenu.PopupBaseMenuItem {
     grab_key_focus() {
         this._entry.grab_key_focus();
     }
-};
+});
