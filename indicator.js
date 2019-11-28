@@ -170,7 +170,7 @@ var RecentsIndicator = GObject.registerClass(class RecentsIndicatorClass extends
 
         _renderHeader() {
             this._searchItem = new SearchItem.SearchItem();
-            this._searchItem.connect('notify::value', this._rerender.bind(this));
+            this._searchItem.connect('text-changed', this._rerender.bind(this));
             this._header.addMenuItem(this._searchItem);
         }
 

@@ -4,7 +4,13 @@ const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
 const GObject = imports.gi.GObject;
 
-var SearchItem = GObject.registerClass(class SearchItemClass extends PopupMenu.PopupBaseMenuItem {
+var SearchItem = GObject.registerClass(
+    {
+        Signals: {
+            'text-changed': {}
+        }
+    },
+    class SearchItemClass extends PopupMenu.PopupBaseMenuItem {
     
     _init() {
         super._init({
