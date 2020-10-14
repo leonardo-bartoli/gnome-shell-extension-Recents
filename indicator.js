@@ -5,7 +5,6 @@ const {
     Clutter,
     Gio,
     GObject,
-    Gtk,
     Meta,
     Shell,
     St
@@ -60,7 +59,7 @@ class PopupMenuScrollableSection extends PopupMenu.PopupMenuSection {
     constructor() {
         super();
 
-        this.actor = new St.ScrollView({style_class: 'vfade', hscrollbar_policy: Gtk.PolicyType.NEVER, vscrollbar_policy: Gtk.PolicyType.NEVER});
+        this.actor = new St.ScrollView({style_class: 'vfade', hscrollbar_policy: St.PolicyType.NEVER, vscrollbar_policy: St.PolicyType.NEVER});
         this.actor.add_actor(this.box);
         this.actor._delegate = this;
         this.isOpen = true;
