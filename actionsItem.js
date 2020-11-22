@@ -81,16 +81,21 @@ var ActionsItem = GObject.registerClass(class ActionsItemClass extends PopupMenu
             can_focus: false
         });
 
-        let _prefs = new PrefsBtn();
+        let _prefs = new PrefsBtn({
+            x_expand: true,
+            x_fill: false
+        });
         _prefs.connect('clicked', function() {
             Util.spawn(['gnome-shell-extension-prefs', 'Recents@leonardo.bartoli.gmail.com']);
         });
 
-        let _clear = new ClearBtn();
+        let _clear = new ClearBtn({
+            x_expand: true,
+            x_fill: false
+        });
         _clear.connect('clicked', recentManager.clearAll.bind(recentManager));
         
-        this.actor.add(_prefs, { expand: true, x_fill: false });
-        this.actor.add(_clear, { expand: true, x_fill: false });
+        this.actor.add_child(_prefs);
+        this.actor.add_child(_clear);
     }
 });
-

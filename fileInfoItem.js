@@ -9,14 +9,16 @@ var FileInfoItem = GObject.registerClass(class FileInfoItemClass extends PopupMe
     _init(gicon, label, dirUri, uri, client) {
         super._init();
         
-        this.icon = this.actor.add(new St.Icon({
+        this.icon = this.actor.add_child(new St.Icon({
             gicon: gicon,
             fallback_icon_name: 'application-x-executable-symbolic',
             style_class: 'popup-menu-icon'
         }));
-        this.actor.add(new St.Label({ text: label}), { expand: true });
+        this.actor.add_child(new St.Label({ text: label, x_expand: true }));
 
-        this._removeBtn = new St.Button();
+        this._removeBtn = new St.Button({
+            x_align: St.Align.END
+        });
         this._removeBtn.child = new St.Icon({
             icon_name: 'edit-delete-symbolic',
             style_class: 'popup-menu-icon'
@@ -30,6 +32,6 @@ var FileInfoItem = GObject.registerClass(class FileInfoItemClass extends PopupMe
             }
             return Clutter.EVENT_STOP;
         }));
-        this.actor.add(this._removeBtn, { x_align: St.Align.END });
+        this.actor.add(this._removeBtn);
     }
 });
