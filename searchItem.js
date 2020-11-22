@@ -24,9 +24,10 @@ var SearchItem = GObject.registerClass(
             style_class: 'search-entry',
             track_hover: true,
             reactive: true,
-            can_focus: true
+            can_focus: true,
+            x_expand: true
         });
-        this.actor.add(this._entry, { expand: true });
+        this.actor.add_child(this._entry);
 
         this._entry.set_primary_icon(new St.Icon({
             style_class: 'search-entry-icon',
