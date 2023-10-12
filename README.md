@@ -1,3 +1,5 @@
+__gnome-shell-extension-Recents is now archived and will no longer receive updates.__
+
 # GNOME Shell Recent(item)s
 
 Recent(item)s adds an indicator to gnome shell panel to quickly navigate recent open files.
